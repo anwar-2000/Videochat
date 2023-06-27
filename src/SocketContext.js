@@ -24,17 +24,42 @@ const ContextProvider = ({children}) =>{
 
     useEffect(()=>{
         navigator.mediaDevices.getUserMedia({video : true , audio : true}).then((currentStream)=>{
+               
+                //console.log(currentStream);
                 setStream(currentStream);
-
-                myVideo.current.srcObject = currentStream;
+                //console.log(stream)
+                if (myVideo.current) {
+                    myVideo.current.srcObject = currentStream;
+                  }
         });
 
         socket.on("me",(id)=>setMyId(id))
 
         socket.on("calluser" , ({from , name : callerName , signal})=>{
+            console.log(signal , from)
             setCall({isreceivingCall : true,from,callerName,signal})
+           
         })
     },  [])
+
+    useEffect(() => {
+       //console.log(stream);
+      }, [stream , call]);
+
+      useEffect(() => {
+        console.log('CONTEXT',call);
+       }, [ call]);
+      
+      useEffect(() => {
+        if (myVideo.current && stream) {
+          myVideo.current.srcObject = stream;
+          myVideo.current.play();
+        }
+
+        
+      }, [stream]);
+
+
         const answerCall = () =>{
                 setcallAccepted(true);
 
@@ -69,8 +94,9 @@ const ContextProvider = ({children}) =>{
                 peer.signal(signal)
             });
 
-
+           // console.log(peer)
             connectionRef.current = peer;
+           // console.log(connectionRef)
         }
 
         const leaveCall = () =>{
@@ -84,6 +110,7 @@ const ContextProvider = ({children}) =>{
         return (
             <SocketContext.Provider value={{
                 call , 
+                setmyName,
                 callAccepted,
                 callEnded,
                 myId,

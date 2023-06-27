@@ -1,0 +1,14 @@
+.container {
+    display: flex;
+    gap: 2rem;
+    align-items : center;
+    justify-content: center;
+    
+}
+
+.video__container{
+    background-color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
